@@ -1,0 +1,18 @@
+# Gemfile.lock (optional - some keep it, some don't)
+Gemfile.lock
+
+# Mac OS
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Ruby version managers
+.ruby-version
+.ruby-gemset
+
+# Temporary files
+*.swp
+*.swo
+*~

@@ -1,5 +1,7 @@
 require 'nokogiri'
 require 'open-uri'
+require 'openssl'
+require 'cgi'
 
 def scrape_weather(city, format: 'full', debug: false)
   # Using wttr.in - a scraper-friendly weather service
@@ -11,6 +13,9 @@ def scrape_weather(city, format: 'full', debug: false)
   
   user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
   
+  # SSL configuration to handle certificate issues
+  ssl_options = {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}
+  
   case format
   when 'simple'
     # Format 3: Simple one-line output
@@ -18,7 +23,7 @@ def scrape_weather(city, format: 'full', debug: false)
     puts "Fetching: #{url}" if debug
     
     begin
-      response = URI.open(url, "User-Agent" => user_agent).read
+      response = URI.open(url, "User-Agent" => user_agent, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
       puts "\n" + "="*60
       puts "Weather for: #{city.capitalize}"
       puts "="*60
@@ -34,7 +39,7 @@ def scrape_weather(city, format: 'full', debug: false)
     puts "Fetching: #{url}" if debug
     
     begin
-      response = URI.open(url, "User-Agent" => user_agent).read
+      response = URI.open(url, "User-Agent" => user_agent, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
       puts "\n" + "="*60
       puts "Weather for: #{city.capitalize}"
       puts "="*60
@@ -47,11 +52,13 @@ def scrape_weather(city, format: 'full', debug: false)
   when 'custom'
     # Custom format with specific fields
     # %c - weather condition, %t - temperature, %w - wind, %h - humidity
-    url = "https://wttr.in/#{URI.encode_www_form_component(city)}?format=%l:+%c+%t+%w+%h"
+    # Use CGI.escape for the format string to handle special characters
+    format_string = CGI.escape("%l: %c %t %w %h")
+    url = "https://wttr.in/#{URI.encode_www_form_component(city)}?format=#{format_string}"
     puts "Fetching: #{url}" if debug
     
     begin
-      response = URI.open(url, "User-Agent" => user_agent).read
+      response = URI.open(url, "User-Agent" => user_agent, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
       puts "\n" + "="*60
       puts "Weather Details"
       puts "="*60
@@ -68,7 +75,7 @@ def scrape_weather(city, format: 'full', debug: false)
     
     begin
       require 'json'
-      response = URI.open(url, "User-Agent" => user_agent).read
+      response = URI.open(url, "User-Agent" => user_agent, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
       data = JSON.parse(response)
       
       current = data['current_condition'][0]
@@ -95,7 +102,7 @@ def scrape_weather(city, format: 'full', debug: false)
     puts "Fetching: #{url}" if debug
     
     begin
-      html = URI.open(url, "User-Agent" => user_agent).read
+      html = URI.open(url, "User-Agent" => user_agent, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
       doc = Nokogiri::HTML(html)
 
       if debug

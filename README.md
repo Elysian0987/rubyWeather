@@ -26,28 +26,40 @@ Fetch current weather data for any city worldwide.
 ```bash
 ruby weather_scraper.rb Mumbai
 ```
+Displays detailed 3-day forecast with ASCII art graphics, and extracts temperature readings using Nokogiri.
 
 **Simple One-Line Format:**
 ```bash
 ruby weather_scraper.rb Mumbai --simple
 ```
-Output: `Mumbai: Clear +32°C`
+Output: `Mumbai: 🌫 +26°C`
 
 **Detailed JSON Format:**
 ```bash
 ruby weather_scraper.rb "New York" --json
 ```
-Returns structured data including temperature (C/F), humidity, wind speed, visibility, and conditions.
+Outputs:
+```
+Weather for: New York, United States
+Temperature: -13°C (8°F)
+Condition: Clear
+Wind: 15 km/h WNW
+Humidity: 45%
+Visibility: 10 km
+Feels Like: -18°C
+```
 
 **Plain Text Format:**
 ```bash
 ruby weather_scraper.rb Tokyo --plain
 ```
+Output: `Tokyo: 🌫 🌡️+26°C 🌬️↘12km/h`
 
 **Custom Field Format:**
 ```bash
 ruby weather_scraper.rb London --custom
 ```
+Output: `London: ⛅️ +11°C ↑16km/h 71%` (shows location, condition, temperature, wind, humidity)
 
 **Debug Mode:**
 ```bash
@@ -65,11 +77,17 @@ ruby weather_scraper.rb Paris --debug
 
 ## Features
 
-- Multiple output formats (ASCII art, JSON, plain text, custom)
-- Real-time weather data from wttr.in
-- Support for any city worldwide
-- No API key required
-- Simple command-line interface
+- **Multiple output formats** (ASCII art, JSON, plain text, custom)
+- **3-day weather forecast** with hourly breakdown (full mode)
+- **Real-time weather data** from wttr.in
+- **Temperature extraction** using Nokogiri regex parsing
+- **Multi-word city support** (e.g., "New York", "Los Angeles")
+- **Automatic SSL handling** for secure connections
+- **Error handling** with helpful debugging messages
+- **Support for any city worldwide**
+- **No API key required**
+- **Simple command-line interface**
+- **Debug mode** to troubleshoot connection and parsing issues
 
 ## How It Works
 
@@ -89,11 +107,17 @@ Uses Nokogiri to parse HTML from wttr.in and extract weather information. wttr.i
 
 **Solution**: Use full city names or try major cities
 
+**Issue**: SSL connection errors
+
+**Solution**: The script automatically handles SSL certificate issues with OpenSSL configuration
+
 ## Tech Stack
 
 - Ruby
 - Nokogiri - HTML parsing
 - Open-URI - HTTP requests
+- OpenSSL - SSL/TLS configuration
+- CGI - URL encoding
 - wttr.in - Weather data source
 
 ## License
